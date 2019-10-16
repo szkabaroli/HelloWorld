@@ -19,7 +19,7 @@ uniform sampler2D normalSample;
 
 vec3 albedo = texture(albedoSample, inTextureCoord).rgb;
 float metalness = texture(metalnessSample, inTextureCoord).r;
-float roughness = texture(roughnessSample, inTextureCoord).r;
+float roughness = 0.6f;
 vec3 normal = texture(normalSample, inTextureCoord).rgb;
 
 const vec3 lightDirection = vec3(40.2, 40.0, 4.0);

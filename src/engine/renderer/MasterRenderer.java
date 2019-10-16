@@ -32,8 +32,19 @@ public class MasterRenderer {
 
     private CubeMap currentMap;
 
-    private int prefilteredMap;
-    private int irradianceMap;
+    private int currentPrefilteredMap;
+    private int currentIrradianceMap;
+
+    private int prefilteredMap1;
+    private int irradianceMap1;
+
+    private int prefilteredMap2;
+    private int irradianceMap2;
+
+    private int prefilteredMap3;
+    private int irradianceMap3;
+
+
     private int brdfFLUT;
 
     private Map<MeshRenderComponent, List<Entity>> entities = new HashMap<>();
@@ -54,6 +65,17 @@ public class MasterRenderer {
         skyRenderer = new SkyRenderer();
         filterEnvRenderer = new FilteredMapRenderer();
         irradianceMapRenderer = new IrradianceMapRenderer();
+
+        prefilteredMap1 = filterEnvRenderer.render(enviromentMap);
+        irradianceMap1 = irradianceMapRenderer.render(enviromentMap);
+
+        prefilteredMap2 = filterEnvRenderer.render(enviromentMap1);
+        irradianceMap2 = irradianceMapRenderer.render(enviromentMap1);
+
+        prefilteredMap3 = filterEnvRenderer.render(enviromentMap2);
+        irradianceMap3 = irradianceMapRenderer.render(enviromentMap2);
+
+        brdfFLUT = new Texture2D("src/engine/brdf.png", false).getTextureId();
     }
 
     public void prepare() {
@@ -65,22 +87,26 @@ public class MasterRenderer {
         switch (current) {
             case 0:
                 currentMap = enviromentMap;
+                currentPrefilteredMap = prefilteredMap1;
+                currentIrradianceMap = prefilteredMap1;
                 break;
             case 1:
                 currentMap = enviromentMap1;
+                currentPrefilteredMap = prefilteredMap2;
+                currentIrradianceMap = prefilteredMap2;
                 break;
             case 2:
                 currentMap = enviromentMap2;
+                currentPrefilteredMap = prefilteredMap3;
+                currentIrradianceMap = prefilteredMap3;
+
                 break;
         }
-
-        prefilteredMap = filterEnvRenderer.render(currentMap);
-        irradianceMap = irradianceMapRenderer.render(currentMap);
-        brdfFLUT = new Texture2D("src/engine/brdf.png", false).getTextureId();
     }
 
     public void render(ICamera camera) {
-        entityRenderer.render(entities, camera, prefilteredMap, irradianceMap, brdfFLUT);
+        System.out.println(currentPrefilteredMap);
+        entityRenderer.render(entities, camera, currentPrefilteredMap, currentIrradianceMap, brdfFLUT);
         skyRenderer.render(currentMap, camera, currentMap.getTexture().getTextureId());
         entities.clear();
     }
